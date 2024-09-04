@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=st.secrets["openai_api_key"])
 
 def get_json_res_small(sys_prompt:str, user_prompt:str):
     
