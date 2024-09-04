@@ -146,11 +146,14 @@ def create_vibrant_donut_sentiment_pie_chart(sentiment_data):
     
     
 def create_sharp_donut_sentiment_pie_chart(sentiment_data):
-    # Extract sentiment distribution data
+    # Define sentiment distribution data
     labels = ['Positive', 'Negative', 'Neutral']
     sizes = [sentiment_data['positive'],
              sentiment_data['negative'],
              sentiment_data['neutral']]
+    
+    # Define consistent color mapping
+    color_mapping = {'Positive': '#4CAF50', 'Negative': '#F44336', 'Neutral': '#FFC107'}
     
     # Filter out slices with 0% size
     filtered_data = [(label, size) for label, size in zip(labels, sizes) if size > 0]
@@ -164,8 +167,8 @@ def create_sharp_donut_sentiment_pie_chart(sentiment_data):
     
     filtered_labels, filtered_sizes = zip(*filtered_data)
     
-    # Colors: Green for Positive, Red for Negative, Yellow for Neutral
-    colors = ['#4CAF50', '#F44336', '#FFC107']
+    # Apply consistent colors based on filtered labels
+    filtered_colors = [color_mapping[label] for label in filtered_labels]
     
     # Explosion effect for slices
     explode = (0.1,) * len(filtered_sizes)  # Emphasize each slice
@@ -173,7 +176,7 @@ def create_sharp_donut_sentiment_pie_chart(sentiment_data):
     # Create a pie chart with advanced features
     fig, ax = plt.subplots(figsize=(6, 4))
     wedges, texts, autotexts = ax.pie(
-        filtered_sizes, colors=colors, labels=filtered_labels, autopct='%1.1f%%', startangle=90, 
+        filtered_sizes, colors=filtered_colors, labels=filtered_labels, autopct='%1.1f%%', startangle=90, 
         pctdistance=0.85, explode=explode, shadow=True
     )
     

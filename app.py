@@ -4,6 +4,30 @@ import os
 from streamlit_mic_recorder import mic_recorder
 from main import get_transcript, analyze_text, create_sharp_donut_sentiment_pie_chart
 
+def print_data(json_resp):
+    with st.spinner('Processing...'):
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("<h2 style='color: red;'>Sentiment</h2>", unsafe_allow_html=True)
+            st.write(json_resp["sentiment"])
+
+            st.markdown("<h2 style='color: red;'>Summary</h2>", unsafe_allow_html=True)
+            st.write(json_resp["summary"])
+
+        with col2:
+            st.markdown("<h2 style='color: red;'>Topics</h2>", unsafe_allow_html=True)
+            st.write(", ".join(json_resp["topics"]))
+
+            st.markdown("<h2 style='color: red;'>Sentiment Distribution</h2>", unsafe_allow_html=True)
+            sentiment_dist = json_resp["sentiment_distribution"]
+            st.write(f"**Positive:** {sentiment_dist['positive']}%")
+            st.write(f"**Negative:** {sentiment_dist['negative']}%")
+            st.write(f"**Neutral:** {sentiment_dist['neutral']}%")
+        fig = create_sharp_donut_sentiment_pie_chart(json_resp['sentiment_distribution'])
+        st.pyplot(fig)
+
+
 
 def main():
     st.title("Nayatel Sentiment Analysis Assistant")
@@ -26,6 +50,16 @@ def main():
             file_name = uploaded_file.name
             with open(f"temp_audio_{file_name}", "wb") as f:
                 f.write(file_contents)
+            
+            text = get_transcript(f"temp_audio_{file_name}")
+            # st.write(text)
+            json_resp = analyze_text(text)
+            
+            st.json(json_resp)
+            # Create columns for organized display
+            # Create columns for organized display
+
+            print_data(json_resp)
             
 
     elif recording_method == "Record from microphone":
@@ -53,31 +87,15 @@ def main():
                 f.write(file_contents)
                 
             text = get_transcript(audio_path)
-            st.write(text)
+            # st.write(text)
             json_resp = analyze_text(text)
+            
             st.json(json_resp)
             # Create columns for organized display
             # Create columns for organized display
-            col1, col2 = st.columns(2)
 
-            with col1:
-                st.markdown("<h2 style='color: red;'>Sentiment</h2>", unsafe_allow_html=True)
-                st.write(json_resp["sentiment"])
-
-                st.markdown("<h2 style='color: red;'>Summary</h2>", unsafe_allow_html=True)
-                st.write(json_resp["summary"])
-
-            with col2:
-                st.markdown("<h2 style='color: red;'>Topics</h2>", unsafe_allow_html=True)
-                st.write(", ".join(json_resp["topics"]))
-
-                st.markdown("<h2 style='color: red;'>Sentiment Distribution</h2>", unsafe_allow_html=True)
-                sentiment_dist = json_resp["sentiment_distribution"]
-                st.write(f"**Positive:** {sentiment_dist['positive']}%")
-                st.write(f"**Negative:** {sentiment_dist['negative']}%")
-                st.write(f"**Neutral:** {sentiment_dist['neutral']}%")
-            fig = create_sharp_donut_sentiment_pie_chart(json_resp['sentiment_distribution'])
-            st.pyplot(fig)
+            print_data(json_resp)
+            
             
             
 
