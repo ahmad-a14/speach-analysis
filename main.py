@@ -5,6 +5,7 @@ import os
 from prompts import system_prompt
 import matplotlib.pyplot as plt
 import numpy as np
+import streamlit as st
 
 load_dotenv()
 client = OpenAI(api_key=st.secrets["openai_api_key"])
